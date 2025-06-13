@@ -1,5 +1,5 @@
 # The Majong Like Test [Русский]
-[Readme in english](./README_ENGLISH.md)
+[Readme in english](./README_ENGLISH.MD)
 
 ## Версия Unity 2022.3.46f1
 

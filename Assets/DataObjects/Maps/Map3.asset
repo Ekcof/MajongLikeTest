@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c211e2b6701b2943aa83d098fb8e4bb, type: 3}
+  m_Name: Map3
+  m_EditorClassIdentifier: 
+  _id: 3
+  _layerConfigs:
+  - _width: 6
+    _height: 6
+    _slots: 010101010101010101010101010101010101010101010101010101010101010101010101
+    Offset: {x: 0, y: 0, z: 0}
+  - _width: 2
+    _height: 2
+    _slots: 01010101
+    Offset: {x: 0, y: 0, z: 0}
+  _pairNum: 2
+  _layerOffset: 0.05
+  _tileOffsetX: 0.8
+  _tileOffsetY: 1

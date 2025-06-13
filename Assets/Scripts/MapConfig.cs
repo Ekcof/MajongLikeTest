@@ -1,9 +1,7 @@
 using Majong.Tiles;
 using System;
 using System.Linq;
-using UnityEditor.Build;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace Majong.Level
 {
@@ -26,7 +24,7 @@ namespace Majong.Level
 	{
 		[SerializeField] private string _id;
 		[SerializeField] private LayerConfig[] _layerConfigs;
-		[SerializeField, Min(1)] private int _pairNum; // number of pairs for every unique tile in the map
+		[SerializeField, Min(1)] private int _pairNum;
 
 		[SerializeField] private float _layerOffset = 0.05f;
 		[SerializeField] private float _tileOffsetX = 0.8f;
@@ -60,11 +58,9 @@ namespace Majong.Level
 			int w = layer.Width;
 			int h = layer.Height;
 
-			// считаем ширину/высоту сетки
 			float totalWidth = (w - 1) * _tileOffsetX;
 			float totalHeight = (h - 1) * _tileOffsetY;
 
-			// смещение, чтобы центр поля оказался в (0,0) локально
 			float x0 = -totalWidth / 2f - layerIndex * _layerOffset;
 			float y0 = totalHeight / 2f + layerIndex * _layerOffset;
 			return new Vector3(x0, y0, -layerIndex);

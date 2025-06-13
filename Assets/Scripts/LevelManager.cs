@@ -33,8 +33,8 @@ namespace Majong.Level
 
 		public void StartNextLevel()
 		{
-			PlayerPrefs.SetString("Level", _currentLevel.Value.ID);
 			_currentLevel.Value = _mapConfigHolder.GetNextMapConfig(_currentLevel.Value.ID);
+			PlayerPrefs.SetString("Level", _currentLevel.Value.ID);
 		}
 
 		public void Restart()

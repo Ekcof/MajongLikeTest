@@ -31,7 +31,7 @@ namespace Majong.Tiles
 		[Inject] private ILevelManager _levelManager;
 
 		[SerializeField] private Tile _tilePrefab;
-		[SerializeField] private float _buildingDelay = 0.5f;
+		[SerializeField] private float _appointingTileDelay = 0.05f;
 		private IMapConfig _currentMap;
 		private ReactiveProperty<int> _matchingPairs = new();
 		private CancellationTokenSource _tokenSource;
@@ -186,7 +186,7 @@ namespace Majong.Tiles
 
 				try
 				{
-					await UniTask.Delay(TimeSpan.FromSeconds(_buildingDelay), cancellationToken: token);
+					await UniTask.Delay(TimeSpan.FromSeconds(_appointingTileDelay), cancellationToken: token);
 				}
 				catch (System.Exception ex)
 				{

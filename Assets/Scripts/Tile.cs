@@ -184,7 +184,7 @@ namespace Majong.Tiles
 			_state.Value = state switch
 			{
 				TileState.Unassigned => OnPop(),
-				TileState.Interactable => current is TileState.Selected ? OnCancel() : OnSetInteractable(true),
+				TileState.Interactable => current is TileState.Selected or TileState.Interactable ? OnCancel() : OnSetInteractable(true),
 				TileState.Selected => OnSelect(),
 				TileState.Blocked => OnSetInteractable(false),
 				TileState.Locked => OnLock(),

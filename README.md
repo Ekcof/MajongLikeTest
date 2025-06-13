@@ -1,4 +1,4 @@
-# The Majong Like Test [ENGLISH]
+# The Majong Like Test [Русский]
 [Readme in english](./README_ENGLISH.md)
 
 ## Версия Unity 2022.3.46f1
@@ -36,4 +36,3 @@
 
 ## Ссылки
 - [Ссылка на проект на Itchi.io](https://itch.io/your-project)  
-- [Билд на android](build/android.apk)

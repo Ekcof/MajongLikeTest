@@ -34,4 +34,4 @@ This manager uses two logical approaches. It first follows a list of AutolevelSt
 - **DOTween** – for GameObject animations  
 
 ## Links
-- [Itch.io Project Page](https://itch.io/your-project)  
+- [Itch.io Project Page](https://algiskhasanov.itch.io/majong-like)  

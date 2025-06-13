@@ -35,4 +35,4 @@
 - DOTween – для анимации геймобжектов  
 
 ## Ссылки
-- [Ссылка на проект на Itchi.io](https://itch.io/your-project)  
+- [Ссылка на проект на Itchi.io]([https://itch.io/your-project](https://algiskhasanov.itch.io/majong-like))  

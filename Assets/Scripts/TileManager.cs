@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Majong.Level;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -30,6 +31,7 @@ namespace Majong.Tiles
 		[Inject] private ILevelManager _levelManager;
 
 		[SerializeField] private Tile _tilePrefab;
+		[SerializeField] private float _buildingDelay = 0.5f;
 		private IMapConfig _currentMap;
 		private ReactiveProperty<int> _matchingPairs = new();
 		private CancellationTokenSource _tokenSource;
@@ -151,6 +153,7 @@ namespace Majong.Tiles
 
 			AutoPlaySteps = new();
 
+			// Тут неправильно строит
 			while (TryGetInteractables(dict, out var tiles, true))
 			{
 				++iteration;
@@ -180,6 +183,15 @@ namespace Majong.Tiles
 				}
 				configPairs.Remove(tileConfig);
 				AutoPlaySteps.Add(new (pair));
+
+				try
+				{
+					await UniTask.Delay(TimeSpan.FromSeconds(_buildingDelay), cancellationToken: token);
+				}
+				catch (System.Exception ex)
+				{
+					Debug.LogError($"Error while waiting of filling map: {ex.Message}");
+				}
 			}
 		}
 

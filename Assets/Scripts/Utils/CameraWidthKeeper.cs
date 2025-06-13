@@ -28,6 +28,6 @@ public class CameraWidthKeeper : MonoBehaviour
 	{
 		_desiredHalfWorldWidth = _perfectOrthographicSize * RefAspect;
 		float currentAspect = (float)Screen.width / Screen.height;
-		_cam.orthographicSize = _desiredHalfWorldWidth / currentAspect;
+		_cam.orthographicSize = Mathf.Clamp(_desiredHalfWorldWidth / currentAspect, _perfectOrthographicSize, float.MaxValue);
 	}
 }

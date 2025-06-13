@@ -22,9 +22,9 @@ MonoBehaviour:
     _height: 5
     _slots: 01010101010001010100000101010000010101000101010101
     Offset: {x: 0, y: 0, z: 0}
-  - _width: 3
+  - _width: 4
     _height: 3
-    _slots: 010101010101010101
+    _slots: 010101010101010101010101
     Offset: {x: 0, y: 0, z: 0}
   _pairNum: 2
   _layerOffset: 0.05

@@ -26,24 +26,23 @@ public class InputManager : MonoBehaviour, IInputManager
 		{
 			_selectedTile = tile;
 
-			if (tile != null)
+			if (tile != null && tile.TrySetState(TileState.Selected))
 			{
-				tile.OnSelect();
 				return;
 			}
 		}
 		else if (_selectedTile == tile)
 		{
-			_selectedTile.OnUnselect();
+			_selectedTile.TrySetState(TileState.Interactable);
 		}
-		else if(tile != null && tile.ID.Equals(_selectedTile.ID))
+		else if(tile != null && tile.HasID && tile.ID.Equals(_selectedTile.ID))
 		{
 			_tileManager.RemoveTiles(_selectedTile, tile);
 		}
 		else
 		{
-			_selectedTile.OnCancel();
-			tile.OnCancel();
+			_selectedTile.TrySetState(TileState.Interactable, true);
+			tile.TrySetState(TileState.Interactable, true);
 		}
 		_selectedTile = null;
 	}

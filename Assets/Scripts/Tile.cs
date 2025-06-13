@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,20 +11,24 @@ using static UnityEngine.ParticleSystem;
 
 namespace Majong.Tiles
 {
+	public enum TileState
+	{
+		Hidden,
+		Unassigned,
+		Interactable,
+		Selected,
+		Blocked,
+		Locked
+	}
+
 	public interface ITile
 	{
 		Collider2D Collider { get; }
 		string ID { get; }
 		bool HasID { get; }
-		void SetInteractable(bool isInteractable);
+		IReadOnlyReactiveProperty<TileState> State { get; }
+		bool TrySetState(TileState state, bool ignorePrevious = false);
 		void SetConfig(ITileConfig config);
-		void Hide();
-		void OnSelect();
-		void OnUnselect();
-		void OnCancel();
-		void OnLock();
-
-		void OnHint();
 		void OnGet(Action onComplete);
 	}
 
@@ -38,12 +43,13 @@ namespace Majong.Tiles
 		[SerializeField] private ParticleSystem _particles;
 		private ITileConfig _config;
 		private Vector3 _nativeScale;
-		private Tween _fadeTween;
+		private ReactiveProperty<TileState> _state = new();
 		public string ID => _config?.Name;
 		public bool HasID => !string.IsNullOrEmpty(ID);
 		public float Width => _renderer.bounds.size.x;
 		public Bounds Bounds => _renderer.bounds;
 		public Collider2D Collider => _collider;
+		public IReadOnlyReactiveProperty<TileState> State => _state;
 
 		private void Awake()
 		{
@@ -51,23 +57,28 @@ namespace Majong.Tiles
 			_button.SetListener(OnPress);
 		}
 
-		public void SetInteractable(bool isInteractable)
+		private TileState OnSetInteractable(bool isInteractable)
 		{
 			DOTween.Kill(_renderer);
 			_button.interactable = isInteractable;
 			var newColor = isInteractable ? Color.white : Color.gray;
 			_renderer.Recolor(newColor);
+			return isInteractable ? TileState.Interactable : TileState.Blocked;
 		}
 
-		public void Activate()
+		private TileState OnPop()
 		{
 			DOTween.Kill(_renderer);
 			DOTween.Kill(_canvasGroup);
+			_config = null;
+			_button.interactable = false;
+			_renderer.color = Color.white;
 			gameObject.SetActive(true);
 			_collider.enabled = true;
 			_renderer.enabled = false;
 			_particles.gameObject.SetActive(false);
 			_canvasGroup.alpha = 0f;
+			return TileState.Unassigned;
 		}
 
 		public void SetConfig(ITileConfig config)
@@ -86,12 +97,13 @@ namespace Majong.Tiles
 			_canvasGroup.alpha = 1f;
 		}
 
-		public void Hide()
+		public TileState OnHide()
 		{
 			_config = null;
 			_collider.enabled = false;
 			_renderer.enabled = false;
 			_canvasGroup.gameObject.SetActive(false);
+			return TileState.Hidden;
 		}
 
 		private void OnPress()
@@ -100,7 +112,7 @@ namespace Majong.Tiles
 		}
 
 		#region Animations
-		public void OnCancel()
+		public TileState OnCancel()
 		{
 			DOTween.Kill(transform);
 			transform.localScale = _nativeScale;
@@ -115,30 +127,35 @@ namespace Majong.Tiles
 					elasticity: 0.5f
 				)
 				.SetEase(Ease.Linear).OnComplete(() => _renderer.color = Color.white);
+
+			return TileState.Interactable;
 		}
 
-		public void OnLock()
+		private TileState OnLock()
 		{
 			DOTween.Kill(transform);
 			DOTween.Kill(_renderer);
 			transform.localScale = _nativeScale;
 			_renderer.Recolor(Color.red);
 			_button.interactable = false;
+			return TileState.Locked;
 		}
 
-		public void OnSelect()
+		private TileState OnSelect()
 		{
 			DOTween.Kill(transform);
 			transform.localScale = _nativeScale;
 			_renderer.color = Color.green;
+			return TileState.Selected;
 		}
 
-		public void OnUnselect()
+		private TileState OnUnselect()
 		{
 			DOTween.Kill(_renderer);
 			DOTween.Kill(transform);
 			transform.localScale = _nativeScale;
-			_renderer.color=Color.white;
+			_renderer.color = Color.white;
+			return TileState.Interactable;
 		}
 
 		public void OnGet(Action onComplete)
@@ -150,24 +167,31 @@ namespace Majong.Tiles
 			_canvasGroup.DOFade(0, 0.7f).OnComplete(() => onComplete?.Invoke());
 			_button.interactable = false;
 		}
-
-		public void OnHint()
-		{
-			float strength = Width * 0.2f;
-			transform
-				.DOPunchPosition(
-					punch: new Vector3(strength, strength, 0f),
-					duration: 0.3f,
-					vibrato: 10,
-					elasticity: 0.5f
-				)
-			.SetEase(Ease.Linear).OnComplete(() => _renderer.color = Color.white);
-		}
 		#endregion
 		private void OnDestroy()
 		{
 			DOTween.Kill(transform);
 			DOTween.Kill(_renderer);
+		}
+
+		public bool TrySetState(TileState state, bool ignorePrevious = false)
+		{
+			if (_state == null || (_state.Value == state && !ignorePrevious))
+			{
+				return false;
+			}
+			var current = _state.Value;
+			_state.Value = state switch
+			{
+				TileState.Unassigned => OnPop(),
+				TileState.Interactable => current is TileState.Selected ? OnCancel() : OnSetInteractable(true),
+				TileState.Selected => OnSelect(),
+				TileState.Blocked => OnSetInteractable(false),
+				TileState.Locked => OnLock(),
+				_ => OnHide()
+			};
+
+			return _state.Value == state;
 		}
 	}
 }

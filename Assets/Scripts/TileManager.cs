@@ -88,7 +88,7 @@ namespace Majong.Tiles
 			if (_tiles.Count == 0) return;
 			foreach (var tile in _tiles.Values)
 			{
-				tile.Hide();
+				tile.TrySetState(TileState.Hidden);
 				_tilePool.Push(tile);
 			}
 			_tiles.Clear();
@@ -133,7 +133,7 @@ namespace Majong.Tiles
 
 						var position = coords.CoordsToVector(config);
 						var tile = _tilePool.Pop();
-						tile.Activate();
+						tile.TrySetState(TileState.Unassigned);
 						tile.transform.localPosition = position;
 						_tiles.Add(coords, tile);
 					}
@@ -201,7 +201,7 @@ namespace Majong.Tiles
 			foreach (var tile in _tiles)
 			{
 				var isInteractable = IsUnblocked(tile.Key);
-				tile.Value.SetInteractable(isInteractable);
+				tile.Value.TrySetState(isInteractable ? TileState.Interactable : TileState.Blocked);
 				if (isInteractable)
 				{
 					interactable.Add(tile.Value);
@@ -214,7 +214,7 @@ namespace Majong.Tiles
 			{
 				foreach (var kvp in _tiles)
 				{
-					kvp.Value.OnLock();
+					kvp.Value.TrySetState(TileState.Locked);
 				}
 			}
 		}
@@ -255,7 +255,7 @@ namespace Majong.Tiles
 				var collider = tile.Value.Collider;
 				if (collider != null && collider.enabled
 					&& collider.OverlapPoint(point) && tile.Key.Layer > coords.Layer
-					&& (!ignoreWithID || tile.Value.HasID))
+					&& (!ignoreWithID || !tile.Value.HasID))
 				{
 					return false;
 				}

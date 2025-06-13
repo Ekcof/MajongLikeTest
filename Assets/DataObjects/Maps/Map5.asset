@@ -24,7 +24,7 @@ MonoBehaviour:
     Offset: {x: 0, y: 0, z: 0}
   - _width: 3
     _height: 3
-    _slots: 010101010001010001
+    _slots: 010101010101010101
     Offset: {x: 0, y: 0, z: 0}
   _pairNum: 2
   _layerOffset: 0.05
